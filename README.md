@@ -31,12 +31,14 @@ npm install
 
 3. Create a .env file in the root of the project with the following structure:
 
-DB_HOST=localhost
-DB_PORT=5432
-DB_USER=your_user
-DB_PASSWORD=your_password
-DB_NAME=your_database
-NODE_ENV=development
-PROJECT_ID=your_project_id
-LOCATION=us
-PROCESSOR_ID=your_processor_id
+```bash
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_USER=your_user
+   DB_PASSWORD=your_password
+   DB_NAME=your_database
+   NODE_ENV=development
+   PROJECT_ID=your_project_id
+   LOCATION=us
+   PROCESSOR_ID=your_processor_id
+```
