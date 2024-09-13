@@ -54,10 +54,10 @@ export class User extends BaseEntity {
   userCode: string;
 
   // Recursive relationship with the same User entity
-  @ManyToOne(() => User, (user) => user.recruits)
-  @JoinColumn({ name: "recruiterCode", referencedColumnName: "userCode" })
-  recruiter: User; // this column represents the recluiter  of  a user (userCode),
+  // @ManyToOne(() => User, (user) => user.recruits)
+  // @JoinColumn({ name: "recruiterCode", referencedColumnName: "userCode" })
+  // recruiter: User; // this column represents the recluiter  of  a user (userCode),
 
-  // Inverse relationship for the recruits
-  recruits: User[]; // This column allows access to users recruited by a specific recruiter.
+  //  Inverse relationship for the recruits
+  // recruits: User[]; // This column allows access to users recruited by a specific recruiter.
 }
