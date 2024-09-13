@@ -1,9 +1,9 @@
 # railway.toml
 [build]
-  builder = "NIXPACKS"
+builder = "NIXPACKS"
 
 [build.env]
-  NODE_ENV = "production"
+NODE_ENV = "production"
 
 [build.cmd]
-  setup = "npm install"  # Usar npm install en lugar de npm ci
+start = "./start.sh"
