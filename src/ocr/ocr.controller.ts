@@ -1,15 +1,18 @@
-import { Controller, Post, Body } from '@nestjs/common';
-import { OcrService } from './ocr.service';
-import { DataFromImage } from 'src/interfaces/interfaces';
+import { ProcessImageResponse } from "src/interfaces/interfaces";
+import { TransformInterceptor } from "./../utils/TransformInterceptor";
+import { Controller, Post, Body, UseInterceptors } from "@nestjs/common";
+import { OcrService } from "./ocr.service";
 
-@Controller('ocr')
+@Controller("ocr")
+@UseInterceptors(TransformInterceptor)
 export class OcrController {
   constructor(private readonly ocrService: OcrService) {}
 
-  @Post('process')
+  @Post("process")
   async processImage(
-    @Body('imageBase64') imageBase64: string,
-  ): Promise<DataFromImage> {
+    @Body("imageBase64") imageBase64: string
+  ): Promise<ProcessImageResponse> {
+    // Usa ProcessImageResponse como tipo de retorno
     return await this.ocrService.processImage(imageBase64);
   }
 }

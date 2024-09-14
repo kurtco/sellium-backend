@@ -12,7 +12,8 @@ async function bootstrap() {
   // Aumentar el tamaño máximo del cuerpo a 50mb
   app.use(bodyParser.json({ limit: "50mb" }));
   app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
-  const port = process.env.DB_PORT || 3000;
+  const port = process.env.APP_PORT || 3000;
+
   await app.listen(port);
 }
 bootstrap();
