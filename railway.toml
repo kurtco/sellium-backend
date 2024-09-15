@@ -5,5 +5,5 @@ builder = "NIXPACKS"
 [build.env]
 NODE_ENV = "production"
 
-[build.cmd]
-start = "./start.sh"
+[deploy]
+start = "npm run migration:run && ./start.sh"
