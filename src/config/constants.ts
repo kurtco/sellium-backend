@@ -1,6 +1,20 @@
+import * as dotenv from "dotenv";
+
+dotenv.config();
+
 import * as documentai from "@google-cloud/documentai";
+
+const credentials = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON
+  ? JSON.parse(
+      Buffer.from(
+        process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON,
+        "base64"
+      ).toString("utf-8")
+    )
+  : undefined;
+
 export const client = new documentai.DocumentProcessorServiceClient({
-  keyFilename: "src/config/sellium-435318-9d9be02cc538.json",
+  credentials,
 });
 
 export const projectId = process.env.PROJECT_ID;
