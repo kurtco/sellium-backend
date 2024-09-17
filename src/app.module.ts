@@ -5,6 +5,7 @@ import { typeOrmConfig } from "./config/database.config";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { OcrModule } from "./ocr/ocr.module";
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { OcrModule } from "./ocr/ocr.module";
     }),
     TypeOrmModule.forRoot(typeOrmConfig),
     OcrModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

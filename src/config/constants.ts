@@ -9,3 +9,9 @@ export const processorId = process.env.PROCESSOR_ID;
 
 export const getProcessorName = () =>
   client.processorPath(projectId, location, processorId);
+
+export const ProcessingBase64 = (imageBase64: string) => {
+  return imageBase64.replace(/^data:image\/(png|jpeg);base64,/, "");
+};
+
+export const defaultErrorMessage: string = "Internal Server Error";

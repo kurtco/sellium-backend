@@ -1,13 +1,14 @@
 export interface DataFromImage {
-  recruiter: string;
-  leader: string;
-  startDate: string;
-  birthDate: string;
+  recruiterName: string;
+  leaderName: string;
+  leaderCode: string;
+  startDate?: Date;
+  birthDate?: Date;
   phone: string;
   email: string;
   homeAddress: string;
   businessAddress: string;
-  spouse: string;
+  spouseName: string;
   userName: string;
   position: string;
   recruiterCode: string;
@@ -15,14 +16,13 @@ export interface DataFromImage {
 }
 
 export interface HttpSuccessResponse<T = any> {
-  data: T; // Aquí 'T' es el tipo que será flexible
+  data: T;
 }
 
 export interface HttpErrorResponse {
-  statusCode: number;
+  statusCode?: number;
   error: string;
   message: string;
 }
 
-// Define un tipo combinado que puede ser tanto una respuesta exitosa como un error
 export type ProcessImageResponse = HttpSuccessResponse | HttpErrorResponse;
