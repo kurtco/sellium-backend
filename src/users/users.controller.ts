@@ -12,4 +12,12 @@ export class UsersController {
   ): Promise<User[]> {
     return this.usersService.findUsersByRecruiterCode(recruiterCode);
   }
+
+  // Recursive Endpoint to get a user with their recruiter and recruited
+  @Get(":userCode/recruits")
+  async getUserWithRecruits(
+    @Param("userCode") userCode: string
+  ): Promise<User> {
+    return this.usersService.getUserWithRecruits(userCode);
+  }
 }

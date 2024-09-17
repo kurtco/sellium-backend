@@ -5,6 +5,7 @@ import {
   ManyToOne,
   JoinColumn,
   BaseEntity,
+  OneToMany,
 } from "typeorm";
 
 @Entity()
@@ -54,11 +55,13 @@ export class User extends BaseEntity {
   spouseName: string;
 
   // Recursive relationship with the same User entity
-  @ManyToOne(() => User, (user) => user.recruits)
+
+  @ManyToOne(() => User, (user) => user.recruits) //This indicates that many users may be related to a single recruiter.
   //  @JoinColumn({ name: "recruiterCode", referencedColumnName: "userCode" })
-  @JoinColumn({ name: "recruiterCode", referencedColumnName: "userCode" }) // Usa userCode como referencia
+  @JoinColumn({ name: "recruiterCode", referencedColumnName: "userCode" }) //  userCode as reference
   recruiter: User; // this column represents the recluiter  of  a user (userCode),
 
   // Inverse relationship for the recruits
+  @OneToMany(() => User, (user) => user.recruiter) // This annotation indicates that one user (the recruiter) can have many recruits.
   recruits: User[]; // This column allows access to users recruited by a specific recruiter.
 }
