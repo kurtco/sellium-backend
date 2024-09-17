@@ -12,7 +12,6 @@ export class OcrController {
   async processImage(
     @Body("imageBase64") imageBase64: string
   ): Promise<ProcessImageResponse> {
-    // Usa ProcessImageResponse como tipo de retorno
     return await this.ocrService.processImage(imageBase64);
   }
 }

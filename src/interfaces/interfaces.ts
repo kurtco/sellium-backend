@@ -1,6 +1,7 @@
 export interface DataFromImage {
   recruiterName: string;
   leaderName: string;
+  leaderCode: string;
   startDate?: Date;
   birthDate?: Date;
   phone: string;

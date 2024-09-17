@@ -19,6 +19,9 @@ export class User extends BaseEntity {
   @Column()
   leaderName: string;
 
+  @Column()
+  leaderCode: string;
+
   @Column({ nullable: true })
   userName: string;
 

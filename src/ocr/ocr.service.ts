@@ -35,6 +35,7 @@ export class OcrService {
           userCode: String(extractedData.recruiterCode),
           userName: extractedData.recruiterName,
           leaderName: extractedData.leaderName,
+          leaderCode: extractedData.leaderCode,
         });
         await this.userRepository.save(recruiter);
       }
@@ -44,8 +45,10 @@ export class OcrService {
         where: { userCode: extractedData.userCode },
       });
 
-      if (!recruit) {
-        // creating the new recruit
+      if (recruit) {
+        this.updateRecruitFields(recruit, extractedData);
+        await this.userRepository.save(recruit);
+      } else {
         const user = this.userRepository.create(extractedData);
         await this.userRepository.save(user);
       }
@@ -75,6 +78,7 @@ export class OcrService {
     const extractedData: DataFromImage = {
       recruiterName: "",
       leaderName: "",
+      leaderCode: "",
       phone: "",
       email: "",
       homeAddress: "",
@@ -107,6 +111,9 @@ export class OcrService {
         case "leader":
           extractedData.leaderName = entity.mentionText;
           break;
+        case "leaderCode":
+          extractedData.leaderCode = entity.mentionText;
+          break;
         case "email":
           extractedData.email = entity.mentionText;
           break;
@@ -136,5 +143,28 @@ export class OcrService {
       }
     });
     return extractedData;
+  }
+
+  private updateRecruitFields(
+    recruit: DataFromImage,
+    extractedData: DataFromImage
+  ): void {
+    recruit.recruiterName =
+      recruit.recruiterName || extractedData.recruiterName;
+    recruit.leaderCode = recruit.leaderCode || extractedData.leaderCode;
+    recruit.leaderName = recruit.leaderName || extractedData.leaderName;
+    recruit.startDate = recruit.startDate || extractedData.startDate;
+    recruit.birthDate = recruit.birthDate || extractedData.birthDate;
+    recruit.phone = recruit.phone || extractedData.phone;
+    recruit.email = recruit.email || extractedData.email;
+    recruit.homeAddress = recruit.homeAddress || extractedData.homeAddress;
+    recruit.businessAddress =
+      recruit.businessAddress || extractedData.businessAddress;
+    recruit.spouseName = recruit.spouseName || extractedData.spouseName;
+    recruit.userName = recruit.userName || extractedData.userName;
+    recruit.position = recruit.position || extractedData.position;
+    recruit.recruiterCode =
+      recruit.recruiterCode || extractedData.recruiterCode;
+    recruit.userCode = recruit.userCode || extractedData.userCode;
   }
 }
