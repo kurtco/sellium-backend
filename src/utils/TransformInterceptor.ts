@@ -14,11 +14,7 @@ export class TransformInterceptor<T> implements NestInterceptor<T, any> {
       map((data) => {
         const statusCode = context.switchToHttp().getResponse().statusCode;
         if (typeof data === "string") {
-          // in the case of being coverting image to base64 @Post("imagetobase64")
-          return {
-            statusCode,
-            base64: data,
-          };
+          return data;
         }
         return {
           statusCode,
