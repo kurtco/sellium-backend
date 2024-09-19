@@ -19,6 +19,12 @@ export class OcrService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User> // Inyecta el repositorio
   ) {}
+
+  async convertToBase64(file: Express.Multer.File): Promise<string> {
+    console.log(file.buffer);
+    return file.buffer.toString("base64"); // convert the imageto base64 text
+  }
+
   async processImage(imageBase64: string): Promise<ProcessImageResponse> {
     try {
       const extractedData: DataFromImage =
