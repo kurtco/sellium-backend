@@ -6,6 +6,7 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { OcrModule } from "./ocr/ocr.module";
 import { UsersModule } from './users/users.module';
+import { StorageModule } from './storage/storage.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { UsersModule } from './users/users.module';
     TypeOrmModule.forRoot(typeOrmConfig),
     OcrModule,
     UsersModule,
+    StorageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
