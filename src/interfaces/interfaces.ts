@@ -23,6 +23,7 @@ export interface HttpErrorResponse {
   statusCode?: number;
   error: string;
   message: string;
+  userCode?: string;
 }
 
 export type ProcessImageResponse = HttpSuccessResponse | HttpErrorResponse;

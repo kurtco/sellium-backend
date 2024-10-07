@@ -5,11 +5,13 @@ import { HttpErrorResponse } from "src/interfaces/interfaces";
 export function handleError(
   error: any,
   message: string,
-  statusCode: number = HttpStatus.INTERNAL_SERVER_ERROR // Código de estado por defecto
+  statusCode: number = HttpStatus.INTERNAL_SERVER_ERROR,
+  userCode?: string
 ): never {
   const response: HttpErrorResponse = {
     error: error.message || defaultErrorMessage,
     message,
+    userCode,
   };
   throw new HttpException(response, statusCode);
 }

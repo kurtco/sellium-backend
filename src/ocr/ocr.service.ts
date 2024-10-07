@@ -1,6 +1,7 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
 import {
   DataFromImage,
+  HttpErrorResponse,
   HttpSuccessResponse,
   ProcessImageResponse,
 } from "src/interfaces/interfaces";
@@ -13,13 +14,14 @@ import { handleError } from "src/utils/HandleError";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/entities/user.entity";
 import { Repository } from "typeorm";
-import { OcrServiceResponses } from "src/interfaces/enums";
+import { OcrServiceResponses, OcrServiceStatus } from "src/interfaces/enums";
 
 @Injectable()
 export class OcrService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User> // Inyecta el repositorio
   ) {}
+  currentUserCode: string = "";
 
   async convertToBase64(file: Express.Multer.File): Promise<string> {
     console.log(file.buffer);
@@ -31,6 +33,7 @@ export class OcrService {
       const extractedData: DataFromImage =
         await this.processImageWithDocumentAI(imageBase64);
 
+      this.currentUserCode = extractedData.userCode;
       // Verify if the  recruiter (reclutador) already exist
       let recruiter = await this.userRepository.findOne({
         where: { userCode: extractedData.recruiterCode },
@@ -53,23 +56,40 @@ export class OcrService {
       });
 
       if (recruit) {
+        // Updatin recuiter data
         this.updateRecruitFields(recruit, extractedData);
         await this.userRepository.save(recruit);
+
+        // Sending message that user already exists  AFTER updating
+        const userCodeValidationResult = await this.validateUserCodeExistence(
+          extractedData.userCode
+        );
       } else {
+        // Creating a new user if it does not exist
         const user = this.userRepository.create(extractedData);
         await this.userRepository.save(user);
       }
 
       return { data: extractedData } as HttpSuccessResponse<DataFromImage>;
     } catch (error) {
-      if (String(error.message) === String(OcrServiceResponses.BadImage)) {
-        handleError(
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
+      if (errorMessage === OcrServiceStatus.BadImage) {
+        return handleError(
           error,
           OcrServiceResponses.BadImage,
           HttpStatus.BAD_REQUEST
         );
+      } else if (errorMessage === OcrServiceStatus.Conflict) {
+        return handleError(
+          error,
+          OcrServiceResponses.Conflict,
+          HttpStatus.CONFLICT
+        );
+      } else {
+        return handleError(error, OcrServiceStatus.Default);
       }
-      handleError(error, "Failed to process image");
     }
   }
 
@@ -158,7 +178,7 @@ export class OcrService {
     });
 
     if (!extractedData.userCode) {
-      throw new Error(String(OcrServiceResponses.BadImage));
+      throw new Error(String(OcrServiceStatus.BadImage));
     }
 
     return extractedData;
@@ -185,5 +205,19 @@ export class OcrService {
     recruit.recruiterCode =
       recruit.recruiterCode || extractedData.recruiterCode;
     recruit.userCode = recruit.userCode || extractedData.userCode;
+  }
+
+  private async validateUserCodeExistence(
+    userCode: string
+  ): Promise<HttpErrorResponse | null> {
+    const existingUser = await this.userRepository.findOne({
+      where: { userCode },
+    });
+
+    if (existingUser) {
+      throw new Error(String(OcrServiceStatus.Conflict));
+    }
+
+    return null; // Si the user does not exist.. returning null
   }
 }
