@@ -24,7 +24,6 @@ export class OcrService {
   currentUserCode: string = "";
 
   async convertToBase64(file: Express.Multer.File): Promise<string> {
-    console.log(file.buffer);
     return file.buffer.toString("base64"); // convert the imageto base64 text
   }
 
@@ -85,7 +84,8 @@ export class OcrService {
         return handleError(
           error,
           OcrServiceResponses.Conflict,
-          HttpStatus.CONFLICT
+          HttpStatus.CONFLICT,
+          this.currentUserCode
         );
       } else {
         return handleError(error, OcrServiceStatus.Default);
