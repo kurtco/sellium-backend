@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpStatus, Injectable } from "@nestjs/common";
 import {
   DataFromImage,
   HttpSuccessResponse,
@@ -13,6 +13,7 @@ import { handleError } from "src/utils/HandleError";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/entities/user.entity";
 import { Repository } from "typeorm";
+import { OcrServiceResponses } from "src/interfaces/enums";
 
 @Injectable()
 export class OcrService {
@@ -61,7 +62,14 @@ export class OcrService {
 
       return { data: extractedData } as HttpSuccessResponse<DataFromImage>;
     } catch (error) {
-      return handleError(error, "Failed to process image");
+      if (String(error.message) === String(OcrServiceResponses.BadImage)) {
+        handleError(
+          error,
+          OcrServiceResponses.BadImage,
+          HttpStatus.BAD_REQUEST
+        );
+      }
+      handleError(error, "Failed to process image");
     }
   }
 
@@ -148,6 +156,11 @@ export class OcrService {
           break;
       }
     });
+
+    if (!extractedData.userCode) {
+      throw new Error(String(OcrServiceResponses.BadImage));
+    }
+
     return extractedData;
   }
 
