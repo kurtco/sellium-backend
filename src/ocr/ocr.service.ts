@@ -14,7 +14,12 @@ import { handleError } from "src/utils/HandleError";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/entities/user.entity";
 import { Repository } from "typeorm";
-import { OcrServiceResponses, OcrServiceStatus } from "src/interfaces/enums";
+import {
+  OcrServiceResponses,
+  OcrServiceStatus,
+  RepresentativeType,
+} from "src/interfaces/enums";
+import { processImageWithDocumentAI } from "src/utils/documentAIUtils";
 
 @Injectable()
 export class OcrService {
@@ -30,46 +35,39 @@ export class OcrService {
   async processImage(imageBase64: string): Promise<ProcessImageResponse> {
     try {
       const extractedData: DataFromImage =
-        await this.processImageWithDocumentAI(imageBase64);
+        await processImageWithDocumentAI(imageBase64);
 
       this.currentUserCode = extractedData.userCode;
-      // Verify if the  recruiter (reclutador) already exist
-      let recruiter = await this.userRepository.findOne({
-        where: { userCode: extractedData.recruiterCode },
-      });
 
-      // If the recruiter (reclutador) does not exist, create a new record for him/her
-      if (!recruiter) {
-        recruiter = this.userRepository.create({
-          userCode: String(extractedData.recruiterCode),
-          userName: extractedData.recruiterName,
-          leaderName: extractedData.leaderName,
-          leaderCode: extractedData.leaderCode,
+      // Verificar si el usuario reclutado ya existe utilizando la función existente
+      const isUserExist = await this.validateUserCodeExistence(
+        extractedData.userCode
+      );
+      const isUserRepresentative = this.validatePosition(
+        extractedData.position
+      );
+      if (!isUserExist && !isUserRepresentative) {
+        let recruiter = await this.userRepository.findOne({
+          where: { userCode: extractedData.recruiterCode },
         });
-        await this.userRepository.save(recruiter);
-      }
 
-      // Check if the recruit (usuario reclutado) already exists
-      let recruit = await this.userRepository.findOne({
-        where: { userCode: extractedData.userCode },
-      });
-
-      if (recruit) {
-        // Updatin recuiter data
-        this.updateRecruitFields(recruit, extractedData);
-        await this.userRepository.save(recruit);
-
-        // Sending message that user already exists  AFTER updating
-        const userCodeValidationResult = await this.validateUserCodeExistence(
-          extractedData.userCode
-        );
-      } else {
-        // Creating a new user if it does not exist
+        // If the recruiter (reclutador) does not exist, create a new record for him/her
+        if (!recruiter) {
+          recruiter = this.userRepository.create({
+            userCode: String(extractedData.recruiterCode),
+            userName: extractedData.recruiterName,
+            leaderName: extractedData.leaderName,
+            leaderCode: extractedData.leaderCode,
+          });
+          await this.userRepository.save(recruiter);
+        }
         const user = this.userRepository.create(extractedData);
         await this.userRepository.save(user);
       }
 
-      return { data: extractedData } as HttpSuccessResponse<DataFromImage>;
+      return {
+        data: extractedData,
+      } as HttpSuccessResponse<DataFromImage>;
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
@@ -80,11 +78,20 @@ export class OcrService {
           OcrServiceResponses.BadImage,
           HttpStatus.BAD_REQUEST
         );
-      } else if (errorMessage === OcrServiceStatus.Conflict) {
+      }
+
+      if (errorMessage === OcrServiceStatus.Conflict) {
         return handleError(
           error,
           OcrServiceResponses.Conflict,
           HttpStatus.CONFLICT,
+          this.currentUserCode
+        );
+      } else if (errorMessage === OcrServiceStatus.UserRepresentiveType) {
+        return handleError(
+          error,
+          OcrServiceResponses.UserRepresentiveType,
+          HttpStatus.UNPROCESSABLE_ENTITY,
           this.currentUserCode
         );
       } else {
@@ -93,123 +100,17 @@ export class OcrService {
     }
   }
 
-  private async processImageWithDocumentAI(
-    base64image: string
-  ): Promise<DataFromImage> {
-    const cleanBase64 = ProcessingBase64(base64image);
-    const name = getProcessorName();
-    const request = {
-      name,
-      rawDocument: {
-        content: cleanBase64,
-        mimeType: "image/png",
-      },
-    };
-    const [result] = await client.processDocument(request);
-
-    const entities = result.document.entities;
-
-    const extractedData: DataFromImage = {
-      recruiterName: "",
-      leaderName: "",
-      leaderCode: "",
-      phone: "",
-      email: "",
-      homeAddress: "",
-      businessAddress: "",
-      spouseName: "",
-      userName: "",
-      position: "",
-      recruiterCode: "",
-      userCode: "",
-    };
-
-    // Iteramos sobre las entidades para obtener los valores
-    entities.forEach((entity) => {
-      switch (entity.type) {
-        case "phone":
-          extractedData.phone = entity.mentionText;
-          break;
-        case "businessAddress":
-          extractedData.businessAddress = entity.mentionText?.replace(
-            /\n/g,
-            " "
-          );
-          break;
-        case "recruiter":
-          extractedData.recruiterName = entity.mentionText;
-          break;
-        case "birthDate":
-          extractedData.birthDate = new Date(entity.mentionText);
-          break;
-        case "leader":
-          extractedData.leaderName = entity.mentionText;
-          break;
-        case "leaderCode":
-          extractedData.leaderCode = entity.mentionText;
-          break;
-        case "email":
-          extractedData.email = entity.mentionText;
-          break;
-        case "homeAddress":
-          extractedData.homeAddress = entity.mentionText?.replace(/\n/g, " ");
-          break;
-        case "spouse":
-          extractedData.spouseName = entity.mentionText;
-          break;
-        case "userName":
-          extractedData.userName = entity.mentionText;
-          break;
-        case "position":
-          extractedData.position = entity.mentionText;
-          break;
-        case "recruiterCode":
-          extractedData.recruiterCode = String(entity.mentionText);
-          break;
-        case "startDate":
-          extractedData.startDate = new Date(entity.mentionText);
-          break;
-        case "userCode":
-          extractedData.userCode = String(entity.mentionText);
-          break;
-        default:
-          break;
-      }
-    });
-
-    if (!extractedData.userCode) {
-      throw new Error(String(OcrServiceStatus.BadImage));
+  private validatePosition(position: string): boolean {
+    if (position === RepresentativeType.Representative) {
+      throw new Error(String(OcrServiceStatus.UserRepresentiveType));
     }
 
-    return extractedData;
-  }
-
-  private updateRecruitFields(
-    recruit: DataFromImage,
-    extractedData: DataFromImage
-  ): void {
-    recruit.recruiterName =
-      recruit.recruiterName || extractedData.recruiterName;
-    recruit.leaderCode = recruit.leaderCode || extractedData.leaderCode;
-    recruit.leaderName = recruit.leaderName || extractedData.leaderName;
-    recruit.startDate = recruit.startDate || extractedData.startDate;
-    recruit.birthDate = recruit.birthDate || extractedData.birthDate;
-    recruit.phone = recruit.phone || extractedData.phone;
-    recruit.email = recruit.email || extractedData.email;
-    recruit.homeAddress = recruit.homeAddress || extractedData.homeAddress;
-    recruit.businessAddress =
-      recruit.businessAddress || extractedData.businessAddress;
-    recruit.spouseName = recruit.spouseName || extractedData.spouseName;
-    recruit.userName = recruit.userName || extractedData.userName;
-    recruit.position = recruit.position || extractedData.position;
-    recruit.recruiterCode =
-      recruit.recruiterCode || extractedData.recruiterCode;
-    recruit.userCode = recruit.userCode || extractedData.userCode;
+    return false;
   }
 
   private async validateUserCodeExistence(
     userCode: string
-  ): Promise<HttpErrorResponse | null> {
+  ): Promise<HttpErrorResponse | boolean> {
     const existingUser = await this.userRepository.findOne({
       where: { userCode },
     });
@@ -218,6 +119,29 @@ export class OcrService {
       throw new Error(String(OcrServiceStatus.Conflict));
     }
 
-    return null; // Si the user does not exist.. returning null
+    return false;
   }
+
+  // private updateRecruitFields(
+  //   recruit: DataFromImage,
+  //   extractedData: DataFromImage
+  // ): void {
+  //   recruit.recruiterName =
+  //     recruit.recruiterName || extractedData.recruiterName;
+  //   recruit.leaderCode = recruit.leaderCode || extractedData.leaderCode;
+  //   recruit.leaderName = recruit.leaderName || extractedData.leaderName;
+  //   recruit.startDate = recruit.startDate || extractedData.startDate;
+  //   recruit.birthDate = recruit.birthDate || extractedData.birthDate;
+  //   recruit.phone = recruit.phone || extractedData.phone;
+  //   recruit.email = recruit.email || extractedData.email;
+  //   recruit.homeAddress = recruit.homeAddress || extractedData.homeAddress;
+  //   recruit.businessAddress =
+  //     recruit.businessAddress || extractedData.businessAddress;
+  //   recruit.spouseName = recruit.spouseName || extractedData.spouseName;
+  //   recruit.userName = recruit.userName || extractedData.userName;
+  //   recruit.position = recruit.position || extractedData.position;
+  //   recruit.recruiterCode =
+  //     recruit.recruiterCode || extractedData.recruiterCode;
+  //   recruit.userCode = recruit.userCode || extractedData.userCode;
+  // }
 }

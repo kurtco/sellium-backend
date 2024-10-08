@@ -1,6 +1,7 @@
-import { Controller, Get, Param } from "@nestjs/common";
+import { Body, Controller, Get, Param, Patch } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { User } from "src/entities/user.entity";
+import { RepresentativeType } from "src/interfaces/enums";
 
 @Controller("users")
 export class UsersController {
@@ -19,5 +20,17 @@ export class UsersController {
     @Param("userCode") userCode: string
   ): Promise<User> {
     return this.usersService.getUserWithRecruits(userCode);
+  }
+
+  @Patch(":userCode/position")
+  async updateUserPosition(
+    @Param("userCode") userCode: string,
+    @Body("representative") representative: RepresentativeType
+  ): Promise<User> {
+    const result = await this.usersService.updateUserPosition(
+      userCode,
+      representative
+    );
+    return result;
   }
 }
