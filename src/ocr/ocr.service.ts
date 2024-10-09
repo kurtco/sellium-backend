@@ -70,7 +70,7 @@ export class OcrService {
 
       if (errorMessage === OcrServiceStatus.BadImage) {
         return handleError(
-          error,
+          OcrServiceStatus.BadImage,
           OcrServiceResponses.BadImage,
           HttpStatus.BAD_REQUEST
         );
@@ -78,7 +78,7 @@ export class OcrService {
 
       if (errorMessage === OcrServiceStatus.Conflict) {
         return handleError(
-          error,
+          OcrServiceStatus.Conflict,
           OcrServiceResponses.Conflict,
           HttpStatus.CONFLICT,
           this.currentUserCode,
@@ -86,7 +86,7 @@ export class OcrService {
         );
       } else if (errorMessage === OcrServiceStatus.UserRepresentiveType) {
         return handleError(
-          error,
+          OcrServiceStatus.UserRepresentiveType,
           OcrServiceResponses.UserRepresentiveType,
           HttpStatus.UNPROCESSABLE_ENTITY,
           this.currentUserCode,
