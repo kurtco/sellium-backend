@@ -19,11 +19,12 @@ export interface HttpSuccessResponse<T = any> {
   data: T;
 }
 
-export interface HttpErrorResponse {
+export interface HttpErrorResponse<T = unknown> {
   statusCode?: number;
   error: string;
   message: string;
   userCode?: string;
+  data?: T;
 }
 
 export type ProcessImageResponse = HttpSuccessResponse | HttpErrorResponse;

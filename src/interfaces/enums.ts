@@ -23,3 +23,7 @@ export enum UserServiceRespones {
   NotUpdated = "Failed to update user position",
   NotFound = "User not found.",
 }
+
+export enum userServiceResponses {
+  default = "Error saving processed data to the database",
+}

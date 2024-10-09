@@ -1,7 +1,17 @@
-import { Body, Controller, Get, Param, Patch } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+} from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { User } from "src/entities/user.entity";
-import { RepresentativeType } from "src/interfaces/enums";
+import { userServiceResponses } from "src/interfaces/enums";
+import { DataFromImage } from "src/interfaces/interfaces";
 
 @Controller("users")
 export class UsersController {
@@ -22,15 +32,16 @@ export class UsersController {
     return this.usersService.getUserWithRecruits(userCode);
   }
 
-  @Patch(":userCode/position")
-  async updateUserPosition(
-    @Param("userCode") userCode: string,
-    @Body("representative") representative: RepresentativeType
-  ): Promise<User> {
-    const result = await this.usersService.updateUserPosition(
-      userCode,
-      representative
-    );
-    return result;
+  @Post("newuser")
+  async saveProcessedData(@Body() data: DataFromImage): Promise<DataFromImage> {
+    try {
+      const savedUser = await this.usersService.saveUserData(data);
+      return savedUser;
+    } catch (error) {
+      throw new HttpException(
+        userServiceResponses.default,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 }

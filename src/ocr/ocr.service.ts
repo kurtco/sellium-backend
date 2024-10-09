@@ -5,11 +5,7 @@ import {
   HttpSuccessResponse,
   ProcessImageResponse,
 } from "src/interfaces/interfaces";
-import {
-  client,
-  getProcessorName,
-  ProcessingBase64,
-} from "src/config/constants";
+
 import { handleError } from "src/utils/HandleError";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/entities/user.entity";
@@ -27,6 +23,7 @@ export class OcrService {
     @InjectRepository(User) private readonly userRepository: Repository<User> // Inyecta el repositorio
   ) {}
   currentUserCode: string = "";
+  extractedData: DataFromImage = null;
 
   async convertToBase64(file: Express.Multer.File): Promise<string> {
     return file.buffer.toString("base64"); // convert the imageto base64 text
@@ -34,39 +31,38 @@ export class OcrService {
 
   async processImage(imageBase64: string): Promise<ProcessImageResponse> {
     try {
-      const extractedData: DataFromImage =
-        await processImageWithDocumentAI(imageBase64);
+      this.extractedData = await processImageWithDocumentAI(imageBase64);
 
-      this.currentUserCode = extractedData.userCode;
+      this.currentUserCode = this.extractedData.userCode;
 
       // Verificar si el usuario reclutado ya existe utilizando la función existente
       const isUserExist = await this.validateUserCodeExistence(
-        extractedData.userCode
+        this.extractedData.userCode
       );
       const isUserRepresentative = this.validatePosition(
-        extractedData.position
+        this.extractedData.position
       );
       if (!isUserExist && !isUserRepresentative) {
         let recruiter = await this.userRepository.findOne({
-          where: { userCode: extractedData.recruiterCode },
+          where: { userCode: this.extractedData.recruiterCode },
         });
 
         // If the recruiter (reclutador) does not exist, create a new record for him/her
         if (!recruiter) {
           recruiter = this.userRepository.create({
-            userCode: String(extractedData.recruiterCode),
-            userName: extractedData.recruiterName,
-            leaderName: extractedData.leaderName,
-            leaderCode: extractedData.leaderCode,
+            userCode: String(this.extractedData.recruiterCode),
+            userName: this.extractedData.recruiterName,
+            leaderName: this.extractedData.leaderName,
+            leaderCode: this.extractedData.leaderCode,
           });
           await this.userRepository.save(recruiter);
         }
-        const user = this.userRepository.create(extractedData);
+        const user = this.userRepository.create(this.extractedData);
         await this.userRepository.save(user);
       }
 
       return {
-        data: extractedData,
+        data: this.extractedData,
       } as HttpSuccessResponse<DataFromImage>;
     } catch (error) {
       const errorMessage =
@@ -85,14 +81,16 @@ export class OcrService {
           error,
           OcrServiceResponses.Conflict,
           HttpStatus.CONFLICT,
-          this.currentUserCode
+          this.currentUserCode,
+          this.extractedData
         );
       } else if (errorMessage === OcrServiceStatus.UserRepresentiveType) {
         return handleError(
           error,
           OcrServiceResponses.UserRepresentiveType,
           HttpStatus.UNPROCESSABLE_ENTITY,
-          this.currentUserCode
+          this.currentUserCode,
+          this.extractedData
         );
       } else {
         return handleError(error, OcrServiceStatus.Default);
