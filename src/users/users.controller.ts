@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { User } from "src/entities/user.entity";
@@ -43,5 +44,17 @@ export class UsersController {
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
+  }
+
+  @Get("three-generations")
+  async getThreeGenerations(
+    @Query("recruiterCode") recruiterCode: string
+  ): Promise<User[]> {
+    return await this.usersService.getThreeGenerations(recruiterCode);
+  }
+
+  @Post("insert-dummy-generations")
+  async insertDummyGenerations(): Promise<User[]> {
+    return await this.usersService.insertDummyGenerations();
   }
 }
