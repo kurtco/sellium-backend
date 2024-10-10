@@ -26,12 +26,10 @@ export class UsersService {
     });
   }
 
-  async saveUserData(extractedData: DataFromImage): Promise<User> {
+  async updateUserPosition(extractedData: DataFromImage): Promise<User> {
     let recruiter = await this.userRepository.findOne({
       where: { userCode: extractedData.recruiterCode },
     });
-
-    // If the recruiter (reclutador) does not exist, create a new record for him/her
     if (!recruiter) {
       recruiter = this.userRepository.create({
         userCode: String(extractedData.recruiterCode),
@@ -41,8 +39,17 @@ export class UsersService {
       });
       await this.userRepository.save(recruiter);
     }
-    const user = this.userRepository.create(extractedData);
-    return await this.userRepository.save(user);
+    let recruit = await this.userRepository.findOne({
+      where: { userCode: extractedData.userCode },
+    });
+
+    if (recruit) {
+      recruit.position = extractedData.position;
+      return await this.userRepository.save(recruit);
+    } else {
+      const newUser = this.userRepository.create(extractedData);
+      return await this.userRepository.save(newUser);
+    }
   }
 
   async getThreeGenerations(recruiterCode: string): Promise<User[]> {

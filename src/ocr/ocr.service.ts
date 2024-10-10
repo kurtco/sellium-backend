@@ -35,14 +35,11 @@ export class OcrService {
 
       this.currentUserCode = this.extractedData.userCode;
 
-      // Verificar si el usuario reclutado ya existe utilizando la función existente
-      const isUserExist = await this.validateUserCodeExistence(
-        this.extractedData.userCode
-      );
-      const isUserRepresentative = this.validatePosition(
+      const isUserRepresentative = this.validateRepresenativePosition(
         this.extractedData.position
       );
-      if (!isUserExist && !isUserRepresentative) {
+
+      if (!isUserRepresentative) {
         let recruiter = await this.userRepository.findOne({
           where: { userCode: this.extractedData.recruiterCode },
         });
@@ -57,8 +54,25 @@ export class OcrService {
           });
           await this.userRepository.save(recruiter);
         }
-        const user = this.userRepository.create(this.extractedData);
-        await this.userRepository.save(user);
+
+        // Verificar si el usuario reclutado ya existe utilizando la función existente
+        let recruit = await this.userRepository.findOne({
+          where: { userCode: this.extractedData.userCode },
+        });
+
+        if (recruit) {
+          // Updating the recruit data
+          console.log("recruit here ", recruit);
+          await this.userRepository.save(recruit);
+        } else {
+          // Creating a new recruit if this does not exist
+          console.log(
+            "recruit  a new recruit if this does not exist ",
+            recruit
+          );
+          const user = this.userRepository.create(this.extractedData);
+          await this.userRepository.save(user);
+        }
       }
 
       return {
@@ -98,7 +112,7 @@ export class OcrService {
     }
   }
 
-  private validatePosition(position: string): boolean {
+  private validateRepresenativePosition(position: string): boolean {
     if (position === RepresentativeType.Representative) {
       throw new Error(String(OcrServiceStatus.UserRepresentiveType));
     }
@@ -106,19 +120,19 @@ export class OcrService {
     return false;
   }
 
-  private async validateUserCodeExistence(
-    userCode: string
-  ): Promise<HttpErrorResponse | boolean> {
-    const existingUser = await this.userRepository.findOne({
-      where: { userCode },
-    });
+  // private async validateUserCodeExistence(
+  //   userCode: string
+  // ): Promise<HttpErrorResponse | boolean> {
+  //   const existingUser = await this.userRepository.findOne({
+  //     where: { userCode },
+  //   });
 
-    if (existingUser) {
-      throw new Error(String(OcrServiceStatus.Conflict));
-    }
+  //   if (existingUser) {
+  //     throw new Error(String(OcrServiceStatus.Conflict));
+  //   }
 
-    return false;
-  }
+  //   return false;
+  // }
 
   // private updateRecruitFields(
   //   recruit: DataFromImage,

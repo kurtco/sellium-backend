@@ -33,10 +33,10 @@ export class UsersController {
     return this.usersService.getUserWithRecruits(userCode);
   }
 
-  @Post("newuser")
+  @Post("updateuserposition")
   async saveProcessedData(@Body() data: DataFromImage): Promise<DataFromImage> {
     try {
-      const savedUser = await this.usersService.saveUserData(data);
+      const savedUser = await this.usersService.updateUserPosition(data);
       return savedUser;
     } catch (error) {
       throw new HttpException(
