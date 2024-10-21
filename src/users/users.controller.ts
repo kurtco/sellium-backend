@@ -12,7 +12,8 @@ import {
 import { UsersService } from "./users.service";
 import { User } from "src/entities/user.entity";
 import { userServiceResponses } from "src/interfaces/enums";
-import { DataFromImage } from "src/interfaces/interfaces";
+import { DataFromImage, ProcessImageResponse } from "src/interfaces/interfaces";
+import { UpdateUserPositionDto } from "./dto/updateUserPosition.dto";
 
 @Controller("users")
 export class UsersController {
@@ -34,7 +35,9 @@ export class UsersController {
   }
 
   @Post("updateuserposition")
-  async saveProcessedData(@Body() data: DataFromImage): Promise<DataFromImage> {
+  async saveProcessedData(
+    @Body() data: UpdateUserPositionDto
+  ): Promise<DataFromImage> {
     try {
       const savedUser = await this.usersService.updateUserPosition(data);
       return savedUser;
@@ -45,7 +48,6 @@ export class UsersController {
       );
     }
   }
-
   @Get("three-generations")
   async getThreeGenerations(
     @Query("recruiterCode") recruiterCode: string
