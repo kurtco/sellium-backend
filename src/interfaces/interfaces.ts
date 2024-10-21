@@ -28,3 +28,16 @@ export interface HttpErrorResponse<T = unknown> {
 }
 
 export type ProcessImageResponse = HttpSuccessResponse | HttpErrorResponse;
+
+export interface PersonalInformation {
+  firstName: string;
+  lastName: string;
+  dateOfBirth?: Date;
+  insured?: string;
+  productType?: string;
+  phone?: string;
+  email?: string;
+  homeAddress?: string;
+  businessAddress?: string;
+  spouseName?: string;
+}

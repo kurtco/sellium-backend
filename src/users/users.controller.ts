@@ -12,8 +12,8 @@ import {
 import { UsersService } from "./users.service";
 import { User } from "src/entities/user.entity";
 import { userServiceResponses } from "src/interfaces/enums";
-import { DataFromImage, ProcessImageResponse } from "src/interfaces/interfaces";
-import { UpdateUserPositionDto } from "./dto/updateUserPosition.dto";
+import { DataFromImage } from "src/interfaces/interfaces";
+import { UpdateUserPositionDto } from "./dto/update-user-position.dto";
 
 @Controller("users")
 export class UsersController {
