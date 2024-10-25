@@ -5,7 +5,9 @@ import { typeOrmConfig } from "./config/database.config";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { OcrModule } from "./ocr/ocr.module";
-import { UsersModule } from './users/users.module';
+import { UsersModule } from "./users/users.module";
+import { PersonalInformationModule } from "./users/details/personalInformation/personal-information.module";
+import { UserDetailsModule } from "./users/details/user-details.module";
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { UsersModule } from './users/users.module';
     TypeOrmModule.forRoot(typeOrmConfig),
     OcrModule,
     UsersModule,
+    UserDetailsModule,
+    PersonalInformationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

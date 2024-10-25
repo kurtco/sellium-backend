@@ -27,6 +27,8 @@ export class OcrController {
   async uploadImage(
     @UploadedFile() file: Express.Multer.File
   ): Promise<string> {
+    console.log(file); // Asegúrate de que el archivo esté llegando
+
     const base64 = await this.ocrService.convertToBase64(file);
     return base64; // Return just text as base64
   }
