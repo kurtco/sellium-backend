@@ -4,6 +4,10 @@ import { PersonalInformation } from "src/interfaces/interfaces";
 export class CreatePersonalInformationDto implements PersonalInformation {
   @IsNotEmpty()
   @IsString()
+  userCode: string;
+
+  @IsNotEmpty()
+  @IsString()
   firstName: string;
 
   @IsNotEmpty()
@@ -11,7 +15,7 @@ export class CreatePersonalInformationDto implements PersonalInformation {
   lastName: string;
 
   @IsOptional()
-  dateOfBirth?: Date;
+  dateOfBirth?: string;
 
   @IsOptional()
   @IsString()
@@ -23,7 +27,11 @@ export class CreatePersonalInformationDto implements PersonalInformation {
 
   @IsOptional()
   @IsString()
-  phone?: string;
+  phoneCode?: string;
+
+  @IsOptional()
+  @IsString()
+  phoneNumber?: string;
 
   @IsOptional()
   @IsString()

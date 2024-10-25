@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from "typeorm";
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToOne,
+  JoinColumn,
+} from "typeorm";
 import { User } from "./user.entity";
 
 @Entity()
@@ -24,7 +30,10 @@ export class JobInformation {
   @Column({ nullable: true, type: "text" })
   appointed: string; // Compañías designadas (puede ser texto largo)
 
-  // Relación con User (One-to-One)
+  @Column({ nullable: false })
+  userCode: string;
+
   @OneToOne(() => User, (user) => user.jobInformation)
-  user: User; // Clave foránea vinculada a la tabla User
+  @JoinColumn({ name: "userCode", referencedColumnName: "userCode" })
+  user: User;
 }

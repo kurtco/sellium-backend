@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { PersonalInformation } from "src/entities/personal_information.entity"; // Entidad de Personal Information
@@ -14,9 +14,22 @@ export class PersonalInformationService {
   async save(
     createPersonalInformationDto: CreatePersonalInformationDto
   ): Promise<PersonalInformation> {
-    const personalInformation = this.personalInformationRepository.create(
-      createPersonalInformationDto
-    );
-    return this.personalInformationRepository.save(personalInformation);
+    const { userCode } = createPersonalInformationDto;
+
+    const existingPersonalInfo =
+      await this.personalInformationRepository.findOne({ where: { userCode } });
+
+    if (existingPersonalInfo) {
+      this.personalInformationRepository.merge(
+        existingPersonalInfo,
+        createPersonalInformationDto
+      );
+      return this.personalInformationRepository.save(existingPersonalInfo);
+    } else {
+      const newPersonalInfo = this.personalInformationRepository.create(
+        createPersonalInformationDto
+      );
+      return this.personalInformationRepository.save(newPersonalInfo);
+    }
   }
 }

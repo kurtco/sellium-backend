@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+} from "typeorm";
 import { User } from "./user.entity";
 
 @Entity()
@@ -96,7 +102,9 @@ export class Progress {
   @Column({ nullable: true })
   netLicense: boolean;
 
-  // Relación Many-to-One con el usuario
+  @Column({ nullable: false })
+  userCode: string; // Clave foránea vinculada a User
   @ManyToOne(() => User, (user) => user.progress)
-  user: User; // Clave foránea vinculada a la tabla User
+  @JoinColumn({ name: "userCode", referencedColumnName: "userCode" })
+  user: User;
 }

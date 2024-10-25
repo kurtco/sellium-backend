@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+} from "typeorm";
 import { User } from "./user.entity";
 
 @Entity()
@@ -42,7 +48,10 @@ export class LicenseAndTrainings {
   @Column({ nullable: true })
   bootCamp: boolean; // Boot Camp (Sí/No)
 
-  // Relación Many-to-One con User
+  @Column({ nullable: false })
+  userCode: string;
+
   @ManyToOne(() => User, (user) => user.licensesAndTrainings)
-  user: User; // Clave foránea vinculada a la tabla User
+  @JoinColumn({ name: "userCode", referencedColumnName: "userCode" })
+  user: User;
 }

@@ -32,10 +32,11 @@ export type ProcessImageResponse = HttpSuccessResponse | HttpErrorResponse;
 export interface PersonalInformation {
   firstName: string;
   lastName: string;
-  dateOfBirth?: Date;
+  dateOfBirth?: string;
   insured?: string;
   productType?: string;
-  phone?: string;
+  phoneCode?: string;
+  phoneNumber?: string;
   email?: string;
   homeAddress?: string;
   businessAddress?: string;
