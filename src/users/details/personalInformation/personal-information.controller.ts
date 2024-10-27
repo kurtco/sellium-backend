@@ -7,6 +7,7 @@ import {
 } from "@nestjs/common";
 import { CreatePersonalInformationDto } from "src/users/dto/create-personal-information.dto";
 import { PersonalInformationService } from "./personal-information.service";
+import { PersonalInformation } from "src/interfaces/interfaces";
 
 @Controller("personal-information")
 export class PersonalInformationController {
@@ -17,7 +18,7 @@ export class PersonalInformationController {
   @Post("save")
   async savePersonalInformation(
     @Body() createPersonalInformationDto: CreatePersonalInformationDto
-  ): Promise<any> {
+  ): Promise<{ message: string; data: PersonalInformation }> {
     try {
       const savedData = await this.personalInformationService.save(
         createPersonalInformationDto

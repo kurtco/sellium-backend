@@ -30,6 +30,7 @@ export interface HttpErrorResponse<T = unknown> {
 export type ProcessImageResponse = HttpSuccessResponse | HttpErrorResponse;
 
 export interface PersonalInformation {
+  userCode: string;
   firstName: string;
   lastName: string;
   dateOfBirth?: string;
@@ -41,4 +42,32 @@ export interface PersonalInformation {
   homeAddress?: string;
   businessAddress?: string;
   spouseName?: string;
+}
+
+export interface JobInformation {
+  userCode: string;
+  promotionDate?: string;
+  personalCode?: string;
+  partOfCompanySince?: string;
+  eo?: boolean;
+  appointed?: string;
+}
+
+export interface Users {
+  id: number;
+  recruiterName: string;
+  recruiterCode: string;
+  leaderName: string;
+  leaderCode: string;
+  userName: string;
+  position: string;
+
+  userCode: string;
+  startDate: string;
+  birthDate: string;
+  phone: string;
+  email: string;
+  homeAddress: string;
+  businessAddress: string;
+  spouseName: string;
 }
