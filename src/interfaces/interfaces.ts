@@ -60,12 +60,12 @@ export interface LicenseAndTrainings {
   fastStar: boolean;
   state: string;
   presented: string;
-  approved: boolean;
-  orientation1: boolean;
-  orientation2: boolean;
-  orientation3: boolean;
-  orientation4: boolean;
-  bootCamp: boolean;
+  approved?: boolean;
+  orientation1?: boolean;
+  orientation2?: boolean;
+  orientation3?: boolean;
+  orientation4?: boolean;
+  bootCamp?: boolean;
 }
 
 export interface Users {
