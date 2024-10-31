@@ -22,16 +22,6 @@ export class UserDetailsService {
     private progressRepository: Repository<Progress>
   ) {}
 
-  // Calculate the percentage of completion
-  private calculateCompletionPercentage(data: any): number {
-    const totalFields = Object.keys(data).length;
-    const filledFields = Object.values(data).filter(
-      (value) => value !== null && value !== undefined && value !== ""
-    ).length;
-
-    return (filledFields / totalFields) * 100;
-  }
-
   async getUserDetails(userCode: string): Promise<any> {
     const user = await this.userRepository.findOne({ where: { userCode } });
     if (!user) {
@@ -50,35 +40,12 @@ export class UserDetailsService {
       where: { userCode },
     });
 
-    // Sum all fields for completion calculation
-    const allTablesData = {
-      user,
-      jobInformation,
-      personalInformation,
-      progress,
-    };
-
-    let totalFields = 0;
-    let filledFields = 0;
-
-    for (const section in allTablesData) {
-      if (allTablesData[section]) {
-        const sectionData = allTablesData[section];
-        totalFields += Object.keys(sectionData).length;
-        filledFields += Object.values(sectionData).filter(
-          (value) => value !== null && value !== undefined && value !== ""
-        ).length;
-      }
-    }
-    const profileCompletion = Math.round((filledFields / totalFields) * 100);
-
     return {
       user,
       jobInformation,
       personalInformation,
       licenseAndTrainings,
       progress,
-      profileCompletion,
     };
   }
 }

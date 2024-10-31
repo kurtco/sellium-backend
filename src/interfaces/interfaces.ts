@@ -53,6 +53,21 @@ export interface JobInformation {
   appointed?: string;
 }
 
+export interface LicenseAndTrainings {
+  userCode: string;
+  licenseType: string;
+  expires: string;
+  fastStar: boolean;
+  state: string;
+  presented: string;
+  approved: boolean;
+  orientation1: boolean;
+  orientation2: boolean;
+  orientation3: boolean;
+  orientation4: boolean;
+  bootCamp: boolean;
+}
+
 export interface Users {
   id: number;
   recruiterName: string;

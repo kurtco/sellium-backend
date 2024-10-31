@@ -14,7 +14,7 @@ export class JobInformationController {
   constructor(private readonly jobInformationService: JobInformationService) {}
 
   // Endpoint para guardar la información de trabajo y retornar JobInformation + PickedUser
-  @Post()
+  @Post("save")
   async saveJobInformation(
     @Body() createJobInformationDto: CreateJobInformationDto
   ): Promise<{

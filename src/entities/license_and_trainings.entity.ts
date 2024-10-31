@@ -11,42 +11,40 @@ import { User } from "./user.entity";
 export class LicenseAndTrainings {
   @PrimaryGeneratedColumn()
   id: number;
-
-  // License Details
   @Column({ nullable: true })
-  licenseType: string; // Tipo de licencia
+  licenseType: string;
 
   @Column({ nullable: true })
-  expires: Date; // Fecha de expiración
+  expires: string;
 
   @Column({ nullable: true })
-  fastStar: boolean; // Fast Star (Sí/No)
+  fastStar: boolean;
 
   // License Exam
   @Column({ nullable: true })
-  state: string; // Estado donde se tomó el examen
+  state: string;
 
   @Column({ nullable: true })
-  presented: Date; // Fecha en que se presentó el examen
+  presented: string;
 
   @Column({ nullable: true })
-  approved: boolean; // Aprobado (Sí/No)
+  approved: boolean;
 
   // Trainings
   @Column({ nullable: true })
-  orientation1: boolean; // Orientación 1
+  orientation1: boolean;
 
   @Column({ nullable: true })
-  orientation2: boolean; // Orientación 2
+  orientation2: boolean;
 
   @Column({ nullable: true })
-  orientation3: boolean; // Orientación 3
+  orientation3: boolean;
 
   @Column({ nullable: true })
-  orientation4: boolean; // Orientación 4
+  orientation4: boolean;
 
   @Column({ nullable: true })
-  bootCamp: boolean; // Boot Camp (Sí/No)
+  bootCamp: boolean;
 
   @Column({ nullable: false })
   userCode: string;

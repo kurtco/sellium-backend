@@ -9,7 +9,7 @@ import { UsersModule } from "./users/users.module";
 import { PersonalInformationModule } from "./users/details/personalInformation/personal-information.module";
 import { UserDetailsModule } from "./users/details/user-details.module";
 import { JobInformationModule } from "./users/details/jobInformation/job-information.module";
-
+import { LicenseTrainingsModule } from "./users/details/licenseTrainings/license-trainings.module";
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -22,6 +22,7 @@ import { JobInformationModule } from "./users/details/jobInformation/job-informa
     UserDetailsModule,
     PersonalInformationModule,
     JobInformationModule,
+    LicenseTrainingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
