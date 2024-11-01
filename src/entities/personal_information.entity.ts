@@ -22,7 +22,7 @@ export class PersonalInformation {
   dateOfBirth: string;
 
   @Column({ nullable: true })
-  insured: string;
+  insured: boolean;
 
   @Column({ nullable: true })
   phoneCode: string;

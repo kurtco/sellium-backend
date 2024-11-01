@@ -33,9 +33,10 @@ export class UserDetailsService {
     });
     const personalInformation =
       await this.personalInformationRepository.findOne({ where: { userCode } });
-    const licenseAndTrainings = await this.licenseAndTrainingsRepository.find({
-      where: { userCode },
-    });
+    const licenseAndTrainings =
+      await this.licenseAndTrainingsRepository.findOne({
+        where: { userCode },
+      });
     const progress = await this.progressRepository.findOne({
       where: { userCode },
     });

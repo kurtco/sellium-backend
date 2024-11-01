@@ -34,7 +34,7 @@ export interface PersonalInformation {
   firstName: string;
   lastName: string;
   dateOfBirth?: string;
-  insured?: string;
+  insured?: boolean;
   productType?: string;
   phoneCode?: string;
   phoneNumber?: string;
@@ -66,6 +66,39 @@ export interface LicenseAndTrainings {
   orientation3?: boolean;
   orientation4?: boolean;
   bootCamp?: boolean;
+}
+
+export interface Progress {
+  userCode: string;
+  year?: number;
+  januaryPoints?: number;
+  januaryPercentage?: number;
+  februaryPoints?: number;
+  februaryPercentage?: number;
+  marchPoints?: number;
+  marchPercentage?: number;
+  aprilPoints?: number;
+  aprilPercentage?: number;
+  mayPoints?: number;
+  mayPercentage?: number;
+  junePoints?: number;
+  junePercentage?: number;
+  julyPoints?: number;
+  julyPercentage?: number;
+  augustPoints?: number;
+  augustPercentage?: number;
+  septemberPoints?: number;
+  septemberPercentage?: number;
+  octoberPoints?: number;
+  octoberPercentage?: number;
+  novemberPoints?: number;
+  novemberPercentage?: number;
+  decemberPoints?: number;
+  decemberPercentage?: number;
+  numberOfAgents?: number;
+  numberOfPoliciesSold?: number;
+  isCoach?: boolean;
+  netLicense?: boolean;
 }
 
 export interface Users {

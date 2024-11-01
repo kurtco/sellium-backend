@@ -10,6 +10,7 @@ import { PersonalInformationModule } from "./users/details/personalInformation/p
 import { UserDetailsModule } from "./users/details/user-details.module";
 import { JobInformationModule } from "./users/details/jobInformation/job-information.module";
 import { LicenseTrainingsModule } from "./users/details/licenseTrainings/license-trainings.module";
+import { ProgressModule } from "./users/details/progress/progress.module";
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -23,6 +24,7 @@ import { LicenseTrainingsModule } from "./users/details/licenseTrainings/license
     PersonalInformationModule,
     JobInformationModule,
     LicenseTrainingsModule,
+    ProgressModule,
   ],
   controllers: [AppController],
   providers: [AppService],

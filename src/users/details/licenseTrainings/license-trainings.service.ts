@@ -25,15 +25,14 @@ export class LicenseTrainingsService {
     if (licenseTraining) {
       // If record exists, update it with new data
       this.licenseTrainingsRepository.merge(licenseTraining, rest);
-      return this.licenseTrainingsRepository.save(licenseTraining);
     } else {
       // If record doesn't exist, create a new one
       licenseTraining = this.licenseTrainingsRepository.create({
         userCode,
         ...rest,
       });
-
-      return this.licenseTrainingsRepository.save(licenseTraining);
     }
+
+    return this.licenseTrainingsRepository.save(licenseTraining);
   }
 }

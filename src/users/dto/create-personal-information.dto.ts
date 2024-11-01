@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsOptional } from "class-validator";
+import { IsNotEmpty, IsString, IsOptional, IsBoolean } from "class-validator";
 import { PersonalInformation } from "src/interfaces/interfaces";
 
 export class CreatePersonalInformationDto implements PersonalInformation {
@@ -18,8 +18,8 @@ export class CreatePersonalInformationDto implements PersonalInformation {
   dateOfBirth?: string;
 
   @IsOptional()
-  @IsString()
-  insured?: string;
+  @IsBoolean()
+  insured?: boolean;
 
   @IsOptional()
   @IsString()
