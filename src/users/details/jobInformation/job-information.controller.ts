@@ -30,7 +30,7 @@ export class JobInformationController {
     };
   }> {
     try {
-      const savedData = await this.jobInformationService.save(
+      const savedData = await this.jobInformationService.saveOrUpdate(
         createJobInformationDto
       );
       return {

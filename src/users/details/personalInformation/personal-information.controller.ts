@@ -20,7 +20,7 @@ export class PersonalInformationController {
     @Body() createPersonalInformationDto: CreatePersonalInformationDto
   ): Promise<{ message: string; data: PersonalInformation }> {
     try {
-      const savedData = await this.personalInformationService.save(
+      const savedData = await this.personalInformationService.saveOrUpdate(
         createPersonalInformationDto
       );
       return {

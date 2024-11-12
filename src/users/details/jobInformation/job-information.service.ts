@@ -23,7 +23,7 @@ export class JobInformationService {
   ) {}
 
   // Method to save/update job information and return JobInformation and a User Pick
-  async save(
+  async saveOrUpdate(
     createJobInformationDto: CreateJobInformationDto
   ): Promise<{ jobInformation: JobInformation; user: PickedUser }> {
     const {
