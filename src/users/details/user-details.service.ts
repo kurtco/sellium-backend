@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { User } from "src/entities/user.entity";
@@ -11,35 +11,32 @@ import { Progress } from "src/entities/progress.entity";
 export class UserDetailsService {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private readonly userRepository: Repository<User>,
     @InjectRepository(JobInformation)
-    private jobInformationRepository: Repository<JobInformation>,
+    private readonly jobInformationRepository: Repository<JobInformation>,
     @InjectRepository(LicenseAndTrainings)
-    private licenseAndTrainingsRepository: Repository<LicenseAndTrainings>,
+    private readonly licenseAndTrainingsRepository: Repository<LicenseAndTrainings>,
     @InjectRepository(PersonalInformation)
-    private personalInformationRepository: Repository<PersonalInformation>,
+    private readonly personalInformationRepository: Repository<PersonalInformation>,
     @InjectRepository(Progress)
-    private progressRepository: Repository<Progress>
+    private readonly progressRepository: Repository<Progress>
   ) {}
 
   async getUserDetails(userCode: string): Promise<any> {
     const user = await this.userRepository.findOne({ where: { userCode } });
+
     if (!user) {
-      throw new Error(`User with userCode ${userCode} not found`);
+      throw new NotFoundException(`User with userCode ${userCode} not found`);
     }
 
-    const jobInformation = await this.jobInformationRepository.findOne({
-      where: { userCode },
-    });
-    const personalInformation =
-      await this.personalInformationRepository.findOne({ where: { userCode } });
-    const licenseAndTrainings =
-      await this.licenseAndTrainingsRepository.findOne({
-        where: { userCode },
-      });
-    const progress = await this.progressRepository.findOne({
-      where: { userCode },
-    });
+    // Buscar las entidades relacionadas
+    const [jobInformation, personalInformation, licenseAndTrainings, progress] =
+      await Promise.all([
+        this.jobInformationRepository.findOne({ where: { userCode } }),
+        this.personalInformationRepository.findOne({ where: { userCode } }),
+        this.licenseAndTrainingsRepository.findOne({ where: { userCode } }),
+        this.progressRepository.findOne({ where: { userCode } }),
+      ]);
 
     return {
       user,
