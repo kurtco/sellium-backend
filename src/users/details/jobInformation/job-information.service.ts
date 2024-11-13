@@ -9,7 +9,7 @@ import { CreateJobInformationDto } from "../../dto/create-job-information.dto";
 // Definir el tipo usando Pick para limitar los campos de User
 type PickedUser = Pick<
   User,
-  "recruiterName" | "recruiterCode" | "leaderName" | "leaderCode"
+  "recruiterName" | "recruiterCode" | "leaderName" | "leaderCode" | "position"
 >;
 
 @Injectable()
@@ -69,6 +69,7 @@ export class JobInformationService {
       recruiterCode: user.recruiterCode,
       leaderName: user.leaderName,
       leaderCode: user.leaderCode,
+      position: user.position,
     };
 
     return { jobInformation, user: pickedUser };
