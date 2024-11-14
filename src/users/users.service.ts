@@ -52,6 +52,46 @@ export class UsersService {
     }
   }
 
+  async getAllGenerations(recruiterCode: string): Promise<User[]> {
+    const query = `
+    WITH RECURSIVE Generaciones AS (
+      SELECT 
+        "id",
+        "recruiterCode",
+        "userCode",
+        "userName",
+        "position",
+        "email",
+        "phone",
+        1 AS nivel
+      FROM 
+        public."user"
+      WHERE 
+        "recruiterCode" = $1
+
+      UNION ALL
+
+      SELECT 
+        u."id",
+        u."recruiterCode",
+        u."userCode",
+        u."userName",
+        u."position",
+        u."email",
+        u."phone",
+        g.nivel + 1 AS nivel
+      FROM 
+        public."user" u
+      INNER JOIN 
+        Generaciones g ON u."recruiterCode" = g."userCode"
+    )
+    SELECT *
+    FROM Generaciones
+    ORDER BY nivel, "id";
+  `;
+    return await this.userRepository.query(query, [recruiterCode]);
+  }
+
   async getThreeGenerations(recruiterCode: string): Promise<User[]> {
     const query = `
     WITH RECURSIVE Generaciones AS (

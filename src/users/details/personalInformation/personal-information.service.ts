@@ -11,7 +11,7 @@ export class PersonalInformationService {
     private readonly personalInformationRepository: Repository<PersonalInformation>
   ) {}
 
-  async save(
+  async saveOrUpdate(
     createPersonalInformationDto: CreatePersonalInformationDto
   ): Promise<PersonalInformation> {
     const { userCode } = createPersonalInformationDto;

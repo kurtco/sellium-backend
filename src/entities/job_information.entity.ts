@@ -13,19 +13,16 @@ export class JobInformation {
   id: number;
 
   @Column({ nullable: true })
-  position: string; // Posición del usuario
-
-  @Column({ nullable: true })
-  promotionDate: Date; // Fecha de promoción
+  promotionDate: string; // Fecha de promoción
 
   @Column({ nullable: true })
   personalCode: string; // Código personal
 
   @Column({ nullable: true })
-  partOfCompanySince: Date; // Parte de la compañía desde
+  partOfCompanySince: string; // Parte de la compañía desde
 
   @Column({ nullable: true })
-  eAndO: boolean; // E&O (Sí/No)
+  eo: boolean; // E&O (Sí/No)
 
   @Column({ nullable: true, type: "text" })
   appointed: string; // Compañías designadas (puede ser texto largo)

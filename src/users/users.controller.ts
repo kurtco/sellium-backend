@@ -30,8 +30,9 @@ export class UsersController {
   @Get(":userCode/recruits")
   async getUserWithRecruits(
     @Param("userCode") userCode: string
-  ): Promise<User> {
-    return this.usersService.getUserWithRecruits(userCode);
+  ): Promise<User[]> {
+    //  return this.usersService.getUserWithRecruits(userCode);
+    return this.usersService.getAllGenerations(userCode);
   }
 
   @Post("updateuserposition")
