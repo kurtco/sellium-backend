@@ -1,7 +1,6 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
 import {
   DataFromImage,
-  HttpErrorResponse,
   HttpSuccessResponse,
   ProcessImageResponse,
 } from "src/interfaces/interfaces";
@@ -58,21 +57,13 @@ export class OcrService {
           await this.userRepository.save(recruiter);
         }
 
-        // Verificar si el usuario reclutado ya existe utilizando la función existente
         let recruit = await this.userRepository.findOne({
           where: { userCode: this.extractedData.userCode },
         });
 
         if (recruit) {
-          // Updating the recruit data
-          console.log("recruit here ", recruit);
           await this.userRepository.save(recruit);
         } else {
-          // Creating a new recruit if this does not exist
-          console.log(
-            "recruit  a new recruit if this does not exist ",
-            recruit
-          );
           const user = this.userRepository.create(this.extractedData);
           await this.userRepository.save(user);
         }
@@ -116,7 +107,22 @@ export class OcrService {
   }
 
   async processPdf(pdfBase64: string): Promise<any> {
-    return await processPdfWithDocumentAI(pdfBase64);
+    try {
+      return await processPdfWithDocumentAI(pdfBase64);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
+      if (errorMessage === OcrServiceStatus.BadPdf) {
+        return handleError(
+          OcrServiceStatus.BadPdf,
+          OcrServiceResponses.BadPdf,
+          HttpStatus.BAD_REQUEST
+        );
+      } else {
+        return handleError(error, OcrServiceStatus.DefaultPdf);
+      }
+    }
   }
 
   private validateRepresenativePosition(position: string): boolean {
