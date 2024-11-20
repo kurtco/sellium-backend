@@ -1,14 +1,18 @@
 export enum OcrServiceResponses {
   BadImage = "The uploaded image does not meet the required format.",
+  BadPdf = "The uploaded PDF does not meet the required format.",
   Conflict = "User already exists",
   UserRepresentiveType = "Choose your representative type to continue",
 }
 
 export enum OcrServiceStatus {
   BadImage = "Bad Image",
+  BadPdf = "Bad PDF",
   Conflict = "User Conflict",
   UserRepresentiveType = "Represetative",
   Default = "Failed to process image",
+  DefaultPdf = "Failed to process PDF ",
+  Error = "Processing Error",
 }
 
 export enum RepresentativeType {

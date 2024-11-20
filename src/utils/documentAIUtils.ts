@@ -108,79 +108,86 @@ export async function processImageWithDocumentAI(
 export async function processPdfWithDocumentAI(
   base64pdf: string
 ): Promise<any> {
-  const cleanBase64 = ProcessingBase64(base64pdf);
-  const name = getProcessorName("pdf");
-  const request = {
-    name,
-    rawDocument: {
-      content: cleanBase64,
-      mimeType: "application/pdf",
-    },
-  };
+  try {
+    const cleanBase64 = ProcessingBase64(base64pdf);
+    const name = getProcessorName("pdf");
+    const request = {
+      name,
+      rawDocument: {
+        content: cleanBase64,
+        mimeType: "application/pdf",
+      },
+    };
 
-  const [result] = await client.processDocument(request);
-  const entities = result.document.entities;
+    const [result] = await client.processDocument(request);
+    const entities = result.document.entities;
 
-  // Estructura para los datos extraídos
-  const extractedData = {
-    agentName: "",
-    companyName: "",
-    productName: "",
-    clientName: "",
-    gender: "",
-    initialPremium: "",
-    specifiedAmount: "",
-    state: "",
-    totalYearsProduct: "",
-    applicationDate: "",
-    clientYearsOld: "",
-    primaAnual: "",
-  };
+    // Estructura para los datos extraídos
+    const extractedData = {
+      agentName: "",
+      companyName: "",
+      productName: "",
+      clientName: "",
+      gender: "",
+      initialPremium: "",
+      specifiedAmount: "",
+      state: "",
+      totalYearsProduct: "",
+      applicationDate: "",
+      clientYearsOld: "",
+      primaAnual: "",
+    };
 
-  // Iterar sobre las entidades y asignar valores según el tipo
-  entities.forEach((entity) => {
-    switch (entity.type) {
-      case "agent":
-        extractedData.agentName = entity.mentionText;
-        break;
-      case "company_name":
-        extractedData.companyName = entity.mentionText;
-        break;
-      case "product_title":
-        extractedData.productName = entity.mentionText;
-        break;
-      case "client_name":
-        extractedData.clientName = entity.mentionText;
-        break;
-      case "gender":
-        extractedData.gender = entity.mentionText;
-        break;
-      case "initial_premium":
-        extractedData.initialPremium = entity.mentionText;
-        break;
-      case "specified_amount":
-        extractedData.specifiedAmount = entity.mentionText;
-        break;
-      case "state":
-        extractedData.state = entity.mentionText;
-        break;
-      case "total_years_product":
-        extractedData.totalYearsProduct = entity.mentionText;
-        break;
-      case "application_date":
-        extractedData.applicationDate = entity.mentionText;
-        break;
-      case "client_years_old":
-        extractedData.clientYearsOld = entity.mentionText;
-        break;
+    // Iterar sobre las entidades y asignar valores según el tipo
+    entities.forEach((entity) => {
+      switch (entity.type) {
+        case "agent":
+          extractedData.agentName = entity.mentionText;
+          break;
+        case "company_name":
+          extractedData.companyName = entity.mentionText;
+          break;
+        case "product_title":
+          extractedData.productName = entity.mentionText;
+          break;
+        case "client_name":
+          extractedData.clientName = entity.mentionText;
+          break;
+        case "gender":
+          extractedData.gender = entity.mentionText;
+          break;
+        case "initial_premium":
+          extractedData.initialPremium = entity.mentionText;
+          break;
+        case "specified_amount":
+          extractedData.specifiedAmount = entity.mentionText;
+          break;
+        case "state":
+          extractedData.state = entity.mentionText;
+          break;
+        case "total_years_product":
+          extractedData.totalYearsProduct = entity.mentionText;
+          break;
+        case "application_date":
+          extractedData.applicationDate = entity.mentionText;
+          break;
+        case "client_years_old":
+          extractedData.clientYearsOld = entity.mentionText;
+          break;
 
-      case "target_premium_prima_anual":
-        extractedData.primaAnual = entity.mentionText;
-      default:
-        break;
+        case "target_premium_prima_anual":
+          extractedData.primaAnual = entity.mentionText;
+        default:
+          break;
+      }
+    });
+
+    if (!extractedData.agentName) {
+      throw new Error(String(OcrServiceStatus.BadPdf));
     }
-  });
 
-  // Devuelve los datos extraídos
-  return extractedData;
+    return extractedData;
+  } catch (error) {
+    throw new Error(String(OcrServiceStatus.Error));
+  }
 }

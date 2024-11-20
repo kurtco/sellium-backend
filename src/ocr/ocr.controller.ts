@@ -29,28 +29,32 @@ export class OcrController {
     @UploadedFile() file: Express.Multer.File
   ): Promise<string> {
     const base64 = await this.ocrService.convertToBase64(file);
-    return base64; // Return just text as base64
-  }
-
-  @Post("pdf-to-base64")
-  @UseInterceptors(FileInterceptor("file"))
-  async convertPdfToBase64(
-    @UploadedFile() file: Express.Multer.File
-  ): Promise<string> {
-    console.log(file); // Asegúrate de que el archivo esté llegando
-    if (file.mimetype !== "application/pdf") {
-      throw new BadRequestException("The file is not a PDF.");
-    }
-    return await this.ocrService.convertToBase64(file);
+    return base64;
   }
 
   @Post("process-pdf")
-  async processPdf(@Body("pdfBase64") pdfBase64: string): Promise<any> {
+  async processPdf(
+    @Body("pdfBase64") pdfBase64: string
+  ): Promise<ProcessImageResponse> {
     if (!pdfBase64) {
       throw new BadRequestException("There is not a base64 to process");
     }
 
-    // Procesa directamente el Base64
-    return await this.ocrService.processPdf(pdfBase64);
+    try {
+      const extractedData = await this.ocrService.processPdf(pdfBase64);
+
+      return {
+        data: extractedData,
+      };
+    } catch (error) {
+      const errorMessage = error.message || "Error processing the PDF";
+
+      // Lanzar error en formato HttpErrorResponse
+      throw new BadRequestException({
+        statusCode: 400,
+        error: "BadRequest",
+        message: errorMessage,
+      });
+    }
   }
 }
