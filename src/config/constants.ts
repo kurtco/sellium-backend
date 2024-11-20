@@ -20,9 +20,12 @@ export const client = new documentai.DocumentProcessorServiceClient({
 export const projectId = process.env.PROJECT_ID;
 export const location = process.env.LOCATION;
 export const processorId = process.env.PROCESSOR_ID;
+export const PDFprocessorId = process.env.PDF_PROCESSOR_ID;
 
-export const getProcessorName = () =>
-  client.processorPath(projectId, location, processorId);
+export const getProcessorName = (documentType = "image"): string => {
+  const processor = documentType === "image" ? processorId : PDFprocessorId;
+  return client.processorPath(projectId, location, processor);
+};
 
 export const ProcessingBase64 = (imageBase64: string) => {
   return imageBase64.replace(/^data:image\/(png|jpeg);base64,/, "");

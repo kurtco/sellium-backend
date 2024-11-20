@@ -16,7 +16,7 @@ export async function processImageWithDocumentAI(
   base64image: string
 ): Promise<DataFromImage> {
   const cleanBase64 = ProcessingBase64(base64image);
-  const name = getProcessorName();
+  const name = getProcessorName("image");
   const request = {
     name,
     rawDocument: {
@@ -109,7 +109,7 @@ export async function processPdfWithDocumentAI(
   base64pdf: string
 ): Promise<any> {
   const cleanBase64 = ProcessingBase64(base64pdf);
-  const name = getProcessorName();
+  const name = getProcessorName("pdf");
   const request = {
     name,
     rawDocument: {
