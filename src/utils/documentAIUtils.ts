@@ -99,3 +99,26 @@ export async function processImageWithDocumentAI(
 
   return extractedData;
 }
+
+/**
+ * Processes a base64 PDF using Document AI and extracts relevant data.
+ * @param base64pdf - The PDF in base64 format.
+ * @returns An object of type DataFromImage containing the extracted information.
+ */
+export async function processPdfWithDocumentAI(
+  base64pdf: string
+): Promise<any> {
+  const cleanBase64 = ProcessingBase64(base64pdf);
+  const name = getProcessorName();
+  const request = {
+    name,
+    rawDocument: {
+      content: cleanBase64,
+      mimeType: "application/pdf",
+    },
+  };
+
+  const [result] = await client.processDocument(request);
+  const entities = result.document.entities;
+  return entities;
+}
