@@ -120,5 +120,67 @@ export async function processPdfWithDocumentAI(
 
   const [result] = await client.processDocument(request);
   const entities = result.document.entities;
-  return entities;
+
+  // Estructura para los datos extraídos
+  const extractedData = {
+    agentName: "",
+    companyName: "",
+    productName: "",
+    clientName: "",
+    gender: "",
+    initialPremium: "",
+    specifiedAmount: "",
+    state: "",
+    totalYearsProduct: "",
+    applicationDate: "",
+    clientYearsOld: "",
+    primaAnual: "",
+  };
+
+  // Iterar sobre las entidades y asignar valores según el tipo
+  entities.forEach((entity) => {
+    switch (entity.type) {
+      case "agent":
+        extractedData.agentName = entity.mentionText;
+        break;
+      case "company_name":
+        extractedData.companyName = entity.mentionText;
+        break;
+      case "product_title":
+        extractedData.productName = entity.mentionText;
+        break;
+      case "client_name":
+        extractedData.clientName = entity.mentionText;
+        break;
+      case "gender":
+        extractedData.gender = entity.mentionText;
+        break;
+      case "initial_premium":
+        extractedData.initialPremium = entity.mentionText;
+        break;
+      case "specified_amount":
+        extractedData.specifiedAmount = entity.mentionText;
+        break;
+      case "state":
+        extractedData.state = entity.mentionText;
+        break;
+      case "total_years_product":
+        extractedData.totalYearsProduct = entity.mentionText;
+        break;
+      case "application_date":
+        extractedData.applicationDate = entity.mentionText;
+        break;
+      case "client_years_old":
+        extractedData.clientYearsOld = entity.mentionText;
+        break;
+
+      case "target_premium_prima_anual":
+        extractedData.primaAnual = entity.mentionText;
+      default:
+        break;
+    }
+  });
+
+  // Devuelve los datos extraídos
+  return extractedData;
 }
