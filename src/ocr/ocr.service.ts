@@ -15,7 +15,10 @@ import {
   OcrServiceStatus,
   RepresentativeType,
 } from "src/interfaces/enums";
-import { processImageWithDocumentAI } from "src/utils/documentAIUtils";
+import {
+  processImageWithDocumentAI,
+  processPdfWithDocumentAI,
+} from "src/utils/documentAIUtils";
 
 @Injectable()
 export class OcrService {
@@ -110,6 +113,10 @@ export class OcrService {
         return handleError(error, OcrServiceStatus.Default);
       }
     }
+  }
+
+  async processPdf(pdfBase64: string): Promise<any> {
+    return await processPdfWithDocumentAI(pdfBase64);
   }
 
   private validateRepresenativePosition(position: string): boolean {
