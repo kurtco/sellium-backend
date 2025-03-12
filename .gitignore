@@ -53,3 +53,5 @@ Thumbs.db
 **/*.key
 
 package-lock.json
+
+dump.rdb
