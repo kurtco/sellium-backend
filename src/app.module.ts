@@ -11,6 +11,8 @@ import { UserDetailsModule } from "./users/details/user-details.module";
 import { JobInformationModule } from "./users/details/jobInformation/job-information.module";
 import { LicenseTrainingsModule } from "./users/details/licenseTrainings/license-trainings.module";
 import { ProgressModule } from "./users/details/progress/progress.module";
+import { CacheConfigModule } from "./cache/cache.module";
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -18,6 +20,7 @@ import { ProgressModule } from "./users/details/progress/progress.module";
       envFilePath: ".env",
     }),
     TypeOrmModule.forRoot(typeOrmConfig),
+    CacheConfigModule, // cache module added
     OcrModule,
     UsersModule,
     UserDetailsModule,
